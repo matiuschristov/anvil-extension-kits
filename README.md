@@ -1,8 +1,10 @@
 # anvil-extension-kits
 
 ## Audio()
-`name`: `str` # help you remember the name of the sound
-`id`: `str` # get from anvil.matiuschristov.com/audio
+`name`: `str`
+ **note** - help you remember the name of the sound
+`id`: `str`
+  **note** - get from anvil.matiuschristov.com/audio
   **note** - the id for an audio file will always be the same
 
 ## SpeechAPI()
