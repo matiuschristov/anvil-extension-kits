@@ -1,0 +1,86 @@
+allow_embedding: false
+dependency_code: {}
+package_name: Animal_Noises
+exported_table_schema: []
+config:
+  client: {}
+  server: {}
+modules: []
+name: Anvil Extension Kits
+scripts: []
+dependency_ids: {}
+startup_form: Form1
+dependency_order: []
+theme:
+  templates:
+  - name: Standard Page
+    description: ''
+    img: null
+    form:
+      class_name: Form
+      is_package: true
+      container:
+        type: HtmlTemplate
+        properties: {html: '@theme:standard-page.html'}
+      components:
+      - type: ColumnPanel
+        properties: {}
+        name: content_panel
+        layout_properties: {slot: default}
+      code: "from ._anvil_designer import $NAME$Template\nfrom anvil import *\n\nclass $NAME$($NAME$Template):\n\n  def __init__(self, **properties):\n    # Set Form properties and Data Bindings.\n    self.init_components(**properties)\n\n    # Any code you write here will run before the form opens.\n    \n"
+  parameters:
+    roles: []
+  assets:
+  - {name: standard-page.html, content: PGRpdiBhbnZpbC1zbG90LXJlcGVhdD0iZGVmYXVsdCI+CjwvZGl2PgoKPGNlbnRlciBzdHlsZT0iY29sb3I6Izg4ODsgbWFyZ2luOiA1MHB4OyI+CiAgPGk+VGhpcyBpcyBhIHBsYWNlaG9sZGVyIGZvciB5b3VyIGFwcCdzIGN1c3RvbSBIVE1MLiBFZGl0IGl0IGJ5IGNoYW5naW5nIHRoZSB0aGVtZSBhc3NldHMuPC9pPgo8L2NlbnRlcj4=, id: QJWPMBLQHL65DEMZTKL4WCHJO7FSLCKR}
+  - {name: theme.css, content: '', id: PN3KTOSN2MKOJLQQ7FGRTZNYOM7LCVCY}
+native_deps:
+  head_html: "<script>\n  const synth = window.speechSynthesis;\n  let voices = [];\n  function updateVoiceList() {\n    voices = synth.getVoices();\n  }\n  function getVoices() {\n    return voices;\n  }\n  window.speechSynthesis.onvoiceschanged = updateVoiceList;\n  window.onload = updateVoiceList;\n  \n  function audioRegister(name, id) {\n      let audio = document.getElementById(`audio_${name}`)\n      if (!audio) {\n          audio = document.createElement('audio');\n          document.getElementsByTagName('body')[0].appendChild(audio);\n      }\n      audio.id = `audio_${name}`;\n      audio.src = `https://anvil.matiuschristov.com/download/audio/${id}`;\n  }\n  function audioPlay(name) {\n      var audio = document.getElementById(`audio_${name}`);\n      if (!audio) return;\n      audio.play()\n  }\n  function audioPause(name) {\n      var audio = document.getElementById(`audio_${audio}`);\n      if (!audio) return;\n      sound.pause()\n  }\n  function speakText(text, options) {\n    const defaultOptions = {\n        rate: 1,\n        pitch: 1,\n        volume: 1,\n        gender: 'female',\n        voice: {\n            female: ['Google US English', 'com.apple.voice.compact.en-AU.Karen', 'Microsoft Zira - English (United States)'],\n            male: ['Google UK English Male', 'com.apple.voice.compact.en-GB.Daniel', 'Microsoft Mark - English (United States)']\n        }\n    };\n    options = {...defaultOptions, ...options};\n    options.gender = options.gender.toLowerCase();\n    let voiceCurrent;\n    if (typeof options.voice == 'object') {\n      voiceCurrent = voices.find(voice => options.voice[options.gender].includes(voice.voiceURI));\n    } else if (typeof options.voice == 'string') {\n      voiceCurrent = voices.find(voice => options.voice == voice.voiceURI);\n    }\n    const msg = new SpeechSynthesisUtterance();\n    const setOptions = ['rate', 'pitch', 'volume'];\n    for (const option in options) {\n        if (setOptions.includes(option)) {\n            msg[option] = options[option];\n        }\n    }\n    msg.text = text;\n    msg.voice = voiceCurrent;\n    synth.speak(msg);\n  }\n</script>"
+correct_dependency_ids: {}
+server_modules: []
+runtime_options:
+  version: 2
+  client_version: '3'
+  server_version: python3-sandbox
+  server_spec: {base: python310-standard, requirements: ''}
+dependencies: []
+forms:
+- container:
+    type: ColumnPanel
+    properties: {visible: true}
+  components:
+  - name: lblTitle
+    properties: {text: Audio Kit - Sounds and Speech, font_size: 28, bold: true}
+    type: Label
+    layout_properties: {grid_position: 'VDBZGM,LWZDCF'}
+  - name: txtAudioID
+    properties: {placeholder: d549e6b7925c5e5048f88f4439444f5b, text: ''}
+    type: TextBox
+    layout_properties: {grid_position: 'LCYFFF,YUZSZD'}
+    event_bindings: {pressed_enter: txtAudioID_pressed_enter}
+  - name: btnPlaySound
+    properties: {text: Click to play sound, align: left}
+    type: Button
+    layout_properties: {grid_position: 'LBRKEK,IKFVOO'}
+    event_bindings: {click: btnPlaySound_click}
+  - name: txtTTS
+    properties: {placeholder: Hello world!}
+    type: TextBox
+    layout_properties: {grid_position: 'ZMZZLT,ZNBHML'}
+    event_bindings: {pressed_enter: txtTTS_pressed_enter}
+  - name: drdVoices
+    properties: {}
+    type: DropDown
+    layout_properties: {grid_position: 'MEHSHX,RZSYHG'}
+  - name: btnTTS
+    properties: {text: Click to speak, align: left}
+    type: Button
+    layout_properties: {grid_position: 'ZJSZCC,GAFSRG'}
+    event_bindings: {click: btnTTS_click}
+  is_package: true
+  code: "from ._anvil_designer import Form1Template\nfrom anvil import *\nfrom anvil.js.window import audioRegister, audioPlay, audioPause, speakText, getVoices\nimport anvil.js\n\nclass Audio:\n  def __init__(self, name: str, id: str):\n    self.name = name\n    self.id = id\n    anvil.js.call(audioRegister, name, id)\n  def play(self):\n    anvil.js.call(audioPlay, self.name)\n  def pause(self):\n    anvil.js.call(audioPause, self.name)\n  def __str__(self) -> str:\n    return f\"Sound({self.name}, {self.id})\"\n\nclass SpeechAPI:\n  def __init__(self):\n    self.voices = anvil.js.call(getVoices)\n  def findVoiceByName(self, name: str):\n    return next((voice for voice in self.voices if voice.name is name), None)\n  def findVoiceByURI(self, uri: str):\n    return next((voice for voice in self.voices if voice.voiceURI is name), None)\n\nclass Speech:\n  def __init__(self, text: str, options: dict = None):\n    self.text = text\n    self.options = options if options is not None else dict()\n  def speak(self):\n    anvil.js.call(speakText, self.text, self.options)\n  def __str__(self) -> str:\n    return f\"Speech({self.text})\"\n\n# Audio()\n# name: str # help you remember the name of the sound\n# id: str # get from anvil.matiuschristov.com/audio\n  # note - the id for an audio file will always be the same\n\n# SpeechAPI()\n# self.voices = list()\n  # note - stores all voices the browser supports\n  # note - mostly internally used\n# self.findVoiceByName()\n  # note - find a voice by its name\n  # note - to pass voice into speech options find URI\n# self.findVoiceByURI()\n  # note - same function as findVoiceByName by argument is voiceURI not name\n\n# Speech()\n# text: str\n# options: dict\n# options.gender = 'male' or 'female'\n# options.voice = 'enter voice nameURI'\n# options.voice.male = []\n  # note - set default array of male voices\n# options.voice.female = []\n  # note - set default array of female voices\n# options.rate = 1\n  # note - speed is multiplied 1 is normal 1.5 is 1.5x speed\n# options.pitch = 1\n# options.volume = 1\n\nclass Form1(Form1Template):\n  def __init__(self, **properties):\n    # Set Form properties and Data Bindings.\n    self.init_components(**properties)\n\n  # THE BELOW CODE IS FOR DEMO PURPOSES YOU CAN SAFELY DELETE IT\n    self.speech = SpeechAPI()\n    self.voices = []\n    for voice in self.speech.voices:\n      if voice.lang.startswith('en') is False or voice.name in self.voices:\n        continue\n      self.voices.append(voice.name)\n    self.drdVoices.items = self.voices\n    \n  def btnPlaySound_click(self, **event_args):\n    Audio('testSound', self.txtAudioID.text if len(self.txtAudioID.text) != 0 else self.txtAudioID.placeholder).play()\n\n  def btnTTS_click(self, **event_args):\n    textOptions = dict()\n    if self.drdVoices.selected_value is not None:\n      selectedVoice = SpeechAPI().findVoiceByName(self.drdVoices.selected_value)\n      textOptions['voice'] = selectedVoice.voiceURI\n    testSpeech = Speech(self.txtTTS.text if len(self.txtTTS.text) != 0 else self.txtTTS.placeholder, textOptions)\n    testSpeech.speak()\n\n  def txtAudioID_pressed_enter(self, **event_args):\n    self.btnPlaySound_click()\n\n  def txtTTS_pressed_enter(self, **event_args):\n   self.btnTTS_click()\n  # THE ABOVE CODE IS FOR DEMO PURPOSES YOU CAN SAFELY DELETE IT"
+  class_name: Form1
+  id: '1721622874341116835595748.7457'
+services:
+- source: /runtime/services/tables.yml
+  client_config: {}
+  server_config: {}
